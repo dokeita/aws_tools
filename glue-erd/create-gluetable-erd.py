@@ -1,6 +1,5 @@
 import boto3
 import click
-# import pprint
 
 glue = boto3.client("glue")
 
@@ -10,8 +9,6 @@ glue = boto3.client("glue")
 def main(db_name, table_name):
     # python create-gluetable-erd.py -d datasource -t dokeita_glue_datasource
 
-    #TODO table_nameが指定されていなければtable一覧を取得する
-
     table_names = []
     if table_name:
         table_names.append(table_name)
@@ -19,41 +16,35 @@ def main(db_name, table_name):
         table_names = get_tables(db_name)
 
     table_erds = []
-    for table_name in table_names:
-        table_erds = table_erds + get_table_erd(db_name, table_name)
+    table_erds.append(f'```mermaid\n')
+    table_erds.append(f'erDiagram\n')
+    for item in table_names:
+        table_erds = table_erds + get_table_erd(db_name, item)
+    table_erds.append(f'```\n')
 
 
-    output(db_name, table_erds)
+    output(db_name, table_erds, table_name)
 
 
 def get_table_erd(db_name, table_name):
-    print('-----')
 
     table = glue.get_table(DatabaseName=db_name, Name=table_name)
 
     name = table.get('Table').get('Name')
     columns = table.get('Table').get('StorageDescriptor').get('Columns')
 
-    print(f'erDiagram')
-    print(f'    {name} {{')
-    for item in columns:
-        print(f'        {item.get("Type")} {item.get("Name")}')
-    print(f'    }}')
-
     lines = []
-    lines.append(f'```mermaid\n')
-    lines.append(f'erDiagram\n')
     lines.append(f'    {name} {{\n')
     for item in columns:
         lines.append(f'        {item.get("Type")} {item.get("Name")}\n')
     lines.append(f'    }}\n')
-    lines.append(f'```\n')
 
     return lines
 
-def output(db_name, lines):
-    print(lines)
-    with open(f'{db_name}.md', 'w', encoding="utf-8", newline='') as f:
+def output(db_name, lines, table_name=None):
+    
+    filename = f'out/{db_name}{ "_"+table_name if table_name else ""}.md'
+    with open(filename, 'w', encoding="utf-8", newline='') as f:
         f.writelines(lines)
 
 
