@@ -7,7 +7,6 @@ glue = boto3.client("glue")
 @click.option('--db_name', '-d', required=True, help='database name')
 @click.option('-table_name', '-t', default='', help='table name')
 def main(db_name, table_name):
-    # python create-gluetable-erd.py -d datasource -t dokeita_glue_datasource
 
     table_names = []
     if table_name:
