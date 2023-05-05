@@ -6,6 +6,18 @@
 * `glueerd` で実行します。コマンドは `glueerd --help` をご確認ください。
 * 実行フォルダに .mdファイルが生成されます。
 
+## help
+```
+% glueerd --help        
+Usage: glueerd [OPTIONS]
+
+Options:
+  -d, --db_name TEXT    database name  [required]
+  -table_name, -t TEXT  table name
+  -out_dir, -o TEXT     output directory. default: current directory
+  --help                Show this message and exit.
+```
+
 ## ライセンス
 MITライセンスです。
 ```
