@@ -6,7 +6,8 @@ glue = boto3.client("glue")
 @click.command()
 @click.option('--db_name', '-d', required=True, help='database name')
 @click.option('-table_name', '-t', default='', help='table name')
-def main(db_name, table_name):
+@click.option('-out_dir', '-o', default='.', help='output directory. default: current directory')
+def main(db_name, table_name, out_dir):
 
     table_names = []
     if table_name:
@@ -22,7 +23,7 @@ def main(db_name, table_name):
     table_erds.append(f'```\n')
 
 
-    output(db_name, table_erds, table_name)
+    output(db_name, table_erds, out_dir, table_name)
 
 
 def get_table_erd(db_name, table_name):
@@ -40,9 +41,9 @@ def get_table_erd(db_name, table_name):
 
     return lines
 
-def output(db_name, lines, table_name=None):
+def output(db_name, lines, out_dir, table_name=None):
     
-    filename = f'out/{db_name}{ "_"+table_name if table_name else ""}.md'
+    filename = f'{out_dir}/{db_name}{ "_"+table_name if table_name else ""}.md'
     with open(filename, 'w', encoding="utf-8", newline='') as f:
         f.writelines(lines)
 
